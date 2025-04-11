@@ -1,4 +1,4 @@
-import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+import { pipeline } from 'https://huggingface.github.io/transformers.js/transformers.min.js';
 
 let generator;
 window.generatedFiles = {};
