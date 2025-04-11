@@ -6,8 +6,7 @@ window.generateApp = async function () {
 
   const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---filename.ext---\n<file content>`;
 
-  // ✅ Call your Hugging Face API instead of local model
-  const response = await fetch("https://Papgy-App-Builder.hf.space/generate", {
+  const response = await fetch("https://app-builder.onrender.com/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt })
@@ -15,7 +14,6 @@ window.generateApp = async function () {
 
   const data = await response.json();
   const generated = data.output || "";
-
   parseGeneratedFiles(generated);
   updatePreview();
 };
