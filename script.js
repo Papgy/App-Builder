@@ -4,9 +4,13 @@ let generator;
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
-      progress_callback: () => {} // Suppress console spam
-    });
+    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
+      progress_callback: () => {},  // disables HuggingFace logs
+      config: {
+      // disables ONNX logs (internally suppressed)
+      logLevel: 'error'
+    }
+  });
   }
   return generator;
 }
