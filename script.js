@@ -6,7 +6,7 @@ window.generateApp = async function () {
 
   const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---filename.ext---\n<file content>`;
 
-  const response = await fetch("https://app-builderp.onrender.com/generate", {
+  const response = await fetch("https://app-builder.onrender.com/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt })
