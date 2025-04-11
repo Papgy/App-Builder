@@ -1,11 +1,12 @@
 import { pipeline } from '@huggingface/transformers';
+const classifier = await pipeline('text-generation');
 
 let generator;
 window.generatedFiles = {};
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/distilgpt2');
+    generator = await classifier('Xenova/distilgpt2');
   }
   return generator;
 }
