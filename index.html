@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI App Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-4">
+
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">🧠 AI App Builder + Live Preview</h1>
+
+    <!-- User App Description -->
+    <div class="mb-6">
+      <label class="block text-lg font-medium mb-2">Describe your app:</label>
+      <textarea id="userInput" rows="3" placeholder="e.g. A simple todo list with buttons and light theme"
+        class="w-full p-3 border border-gray-300 rounded"></textarea>
+      <button onclick="generateApp()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate App</button>
+    </div>
+
+    <!-- Code Editors -->
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+      <div>
+        <h2 class="font-semibold">📄 HTML</h2>
+        <textarea id="htmlCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
+      </div>
+      <div>
+        <h2 class="font-semibold">🎨 CSS</h2>
+        <textarea id="cssCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
+      </div>
+      <div>
+        <h2 class="font-semibold">⚙ JS</h2>
+        <textarea id="jsCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="mb-6">
+      <h2 class="font-semibold text-xl">👁 Live Preview</h2>
+      <iframe id="previewFrame" class="w-full h-80 border border-gray-400 bg-white"></iframe>
+    </div>
+
+    <!-- Debugger -->
+    <div class="mb-6">
+      <h2 class="font-semibold text-xl mb-2">🛠 Debug / Fix a Line</h2>
+      <div class="flex items-center space-x-2">
+        <input type="number" id="lineNumber" class="p-2 border w-24" placeholder="Line #" />
+        <select id="codeType" class="p-2 border">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JS</option>
+        </select>
+        <button onclick="suggestFix()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Suggest Fix</button>
+      </div>
+      <pre id="fixOutput" class="mt-2 bg-gray-200 p-3 font-mono text-sm whitespace-pre-wrap"></pre>
+    </div>
+
+    <!-- Download -->
+    <div class="mb-10">
+      <button onclick="downloadProject()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+        ⬇ Download Project ZIP
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+  <script src="zip.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
