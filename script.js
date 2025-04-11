@@ -4,19 +4,18 @@ let generator;
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
-      progress_callback: () => {},  // disables HuggingFace logs
-      config: {
-      // disables ONNX logs (internally suppressed)
-      logLevel: 'error'
-    }
-  });
+    generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
+      progress_callback: () => {}, // Silence logs
+      config: { logLevel: 'error' } // Suppress ONNX spam (if supported)
+    });
   }
   return generator;
 }
 
 window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
+  if (!input) return alert("Please enter an app description!");
+
   const prompt = `Generate HTML, CSS, and JS code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>`;
 
   const gen = await loadAI();
@@ -31,7 +30,7 @@ window.generateApp = async function () {
   document.getElementById("cssCode").value = css;
   document.getElementById("jsCode").value = js;
 
-  window.updatePreview();
+  updatePreview();
 };
 
 window.updatePreview = function () {
