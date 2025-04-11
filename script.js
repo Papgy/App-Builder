@@ -4,7 +4,7 @@ let generator;
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Qwen/Qwen2.5-1.5B', {
+    generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
       progress_callback: () => {},
       config: { logLevel: 'error' }
     });
