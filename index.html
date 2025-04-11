@@ -38,7 +38,6 @@
 
       <!-- Workspace Tab -->
       <div id="workspaceTab" class="hidden flex-1 p-6 space-y-6 overflow-y-auto">
-
         <!-- Download -->
         <div class="bg-white p-4 rounded shadow">
           <h2 class="font-semibold text-lg mb-2">⬇ Download Project</h2>
@@ -47,22 +46,8 @@
           </button>
         </div>
 
-        <!-- Code Blocks -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-semibold text-blue-600 mb-2">📄 HTML</h3>
-            <pre id="codeHTML" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
-          </div>
-          <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-semibold text-green-600 mb-2">🎨 CSS</h3>
-            <pre id="codeCSS" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
-          </div>
-          <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-semibold text-yellow-600 mb-2">⚙ JS</h3>
-            <pre id="codeJS" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
-          </div>
-        </div>
-
+        <!-- Dynamic Script Viewer -->
+        <div id="dynamicCodeBlocks" class="space-y-6"></div>
       </div>
     </div>
   </div>
