@@ -1,14 +1,11 @@
-import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+import { pipeline } from '@huggingface/transformers';
 
 let generator;
 window.generatedFiles = {};
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
-      progress_callback: () => {},
-      config: { logLevel: 'error' }
-    });
+    generator = await pipeline('text-generation', 'Xenova/distilgpt2');
   }
   return generator;
 }
