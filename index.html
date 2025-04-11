@@ -4,66 +4,70 @@
   <meta charset="UTF-8" />
   <title>AI App Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans p-4">
+<body class="bg-gray-100 text-gray-900 font-sans">
 
-  <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold mb-4">🧠 AI App Builder + Live Preview</h1>
+  <div class="grid grid-cols-1 lg:grid-cols-3 min-h-screen">
 
-    <!-- User App Description -->
-    <div class="mb-6">
-      <label class="block text-lg font-medium mb-2">Describe your app:</label>
-      <textarea id="userInput" rows="3" placeholder="e.g. A simple todo list with buttons and light theme"
-        class="w-full p-3 border border-gray-300 rounded"></textarea>
-      <button onclick="generateApp()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate App</button>
-    </div>
-
-    <!-- Code Editors -->
-    <div class="grid md:grid-cols-3 gap-4 mb-6">
-      <div>
-        <h2 class="font-semibold">📄 HTML</h2>
-        <textarea id="htmlCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
-      </div>
-      <div>
-        <h2 class="font-semibold">🎨 CSS</h2>
-        <textarea id="cssCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
-      </div>
-      <div>
-        <h2 class="font-semibold">⚙ JS</h2>
-        <textarea id="jsCode" class="w-full h-60 p-2 border border-gray-300 font-mono" oninput="updatePreview()"></textarea>
-      </div>
-    </div>
-
-    <!-- Preview -->
-    <div class="mb-6">
-      <h2 class="font-semibold text-xl">👁 Live Preview</h2>
-      <iframe id="previewFrame" class="w-full h-80 border border-gray-400 bg-white"></iframe>
-    </div>
-
-    <!-- Debugger -->
-    <div class="mb-6">
-      <h2 class="font-semibold text-xl mb-2">🛠 Debug / Fix a Line</h2>
-      <div class="flex items-center space-x-2">
-        <input type="number" id="lineNumber" class="p-2 border w-24" placeholder="Line #" />
-        <select id="codeType" class="p-2 border">
-          <option value="html">HTML</option>
-          <option value="css">CSS</option>
-          <option value="js">JS</option>
-        </select>
-        <button onclick="suggestFix()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Suggest Fix</button>
-      </div>
-      <pre id="fixOutput" class="mt-2 bg-gray-200 p-3 font-mono text-sm whitespace-pre-wrap"></pre>
-    </div>
-
-    <!-- Download -->
-    <div class="mb-10">
-      <button onclick="downloadProject()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-        ⬇ Download Project ZIP
+    <!-- Left Panel -->
+    <div class="bg-white p-6 border-r shadow-lg lg:col-span-1 flex flex-col">
+      <h1 class="text-2xl font-bold mb-4">🧠 AI App Builder</h1>
+      <label class="font-medium mb-2">Describe your app:</label>
+      <textarea id="userInput" rows="6" placeholder="e.g. A dark-themed calculator"
+        class="w-full p-3 border border-gray-300 rounded mb-4 resize-none"></textarea>
+      <button onclick="generateApp()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Generate App
       </button>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="lg:col-span-2 flex flex-col">
+      <!-- Tabs -->
+      <div class="bg-white border-b px-6 py-3 flex items-center gap-4">
+        <button id="tabPreview" onclick="switchTab('preview')"
+          class="tab-btn text-blue-600 font-semibold">👁 Preview</button>
+        <button id="tabWorkspace" onclick="switchTab('workspace')"
+          class="tab-btn text-gray-600 hover:text-blue-600">🧩 Workspace</button>
+      </div>
+
+      <!-- Preview Tab -->
+      <div id="previewTab" class="flex-1 p-6">
+        <iframe id="previewFrame" class="w-full h-full border rounded bg-gray-50 min-h-[600px]"></iframe>
+      </div>
+
+      <!-- Workspace Tab -->
+      <div id="workspaceTab" class="hidden flex-1 p-6 space-y-6 overflow-y-auto">
+
+        <!-- Download -->
+        <div class="bg-white p-4 rounded shadow">
+          <h2 class="font-semibold text-lg mb-2">⬇ Download Project</h2>
+          <button onclick="downloadProject()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+            Download ZIP
+          </button>
+        </div>
+
+        <!-- Code Blocks -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-semibold text-blue-600 mb-2">📄 HTML</h3>
+            <pre id="codeHTML" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-semibold text-green-600 mb-2">🎨 CSS</h3>
+            <pre id="codeCSS" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-semibold text-yellow-600 mb-2">⚙ JS</h3>
+            <pre id="codeJS" class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded"></pre>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
   <script src="zip.js"></script>
   <script type="module" src="script.js"></script>
