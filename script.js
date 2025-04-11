@@ -1,10 +1,11 @@
 import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
 
 let generator;
+window.generatedFiles = {};
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
+    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
       progress_callback: () => {},
       config: { logLevel: 'error' }
     });
@@ -16,30 +17,31 @@ window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
   if (!input) return alert("Please enter an app description!");
 
-  const prompt = `Generate HTML, CSS, and JS code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>`;
+  const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>\n(optional: add PYTHON, TS, etc.)`;
+
   const gen = await loadAI();
-  const output = await gen(prompt, { max_new_tokens: 400 });
+  const output = await gen(prompt, { max_new_tokens: 500 });
   const text = output[0].generated_text;
 
-  const html = text.split('---HTML---')[1]?.split('---CSS---')[0]?.trim() || '';
-  const css = text.split('---CSS---')[1]?.split('---JS---')[0]?.trim() || '';
-  const js = text.split('---JS---')[1]?.trim() || '';
-
-  document.getElementById("htmlCode")?.remove(); // Not shown in UI, but cleanup if exists
-  document.getElementById("cssCode")?.remove();
-  document.getElementById("jsCode")?.remove();
-
-  window.generatedHTML = html;
-  window.generatedCSS = css;
-  window.generatedJS = js;
-
+  parseGeneratedFiles(text);
   updatePreview();
 };
 
+function parseGeneratedFiles(rawText) {
+  window.generatedFiles = {};
+  const sections = rawText.split(/---([A-Z]+)---/g).filter(Boolean);
+
+  for (let i = 0; i < sections.length; i += 2) {
+    const type = sections[i].toLowerCase();
+    const content = sections[i + 1]?.trim() || '';
+    window.generatedFiles[type] = content;
+  }
+}
+
 window.updatePreview = function () {
-  const html = window.generatedHTML || '';
-  const css = window.generatedCSS || '';
-  const js = window.generatedJS || '';
+  const html = window.generatedFiles['html'] || '';
+  const css = window.generatedFiles['css'] || '';
+  const js = window.generatedFiles['js'] || '';
 
   const full = `
 <!DOCTYPE html>
@@ -63,7 +65,6 @@ ${js}
 window.switchTab = function (tab) {
   document.getElementById('previewTab').classList.toggle('hidden', tab !== 'preview');
   document.getElementById('workspaceTab').classList.toggle('hidden', tab !== 'workspace');
-
   document.getElementById('tabPreview').classList.toggle('text-blue-600', tab === 'preview');
   document.getElementById('tabWorkspace').classList.toggle('text-blue-600', tab === 'workspace');
 
@@ -71,7 +72,19 @@ window.switchTab = function (tab) {
 };
 
 function renderWorkspace() {
-  document.getElementById("codeHTML").textContent = window.generatedHTML || '';
-  document.getElementById("codeCSS").textContent = window.generatedCSS || '';
-  document.getElementById("codeJS").textContent = window.generatedJS || '';
+  const container = document.getElementById("dynamicCodeBlocks");
+  container.innerHTML = '';
+
+  for (const [lang, content] of Object.entries(window.generatedFiles)) {
+    const langLabel = lang.toUpperCase();
+    const color = lang === 'html' ? 'blue' : lang === 'css' ? 'green' : lang === 'js' ? 'yellow' : 'gray';
+
+    const block = document.createElement("div");
+    block.className = "bg-white p-4 rounded shadow";
+    block.innerHTML = `
+      <h3 class="font-semibold text-${color}-600 mb-2">📄 ${langLabel}</h3>
+      <pre class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded whitespace-pre-wrap">${content}</pre>
+    `;
+    container.appendChild(block);
+  }
 }
