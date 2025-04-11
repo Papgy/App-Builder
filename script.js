@@ -1,26 +1,22 @@
-from transformers import pipeline
-
-let generator;
 window.generatedFiles = {};
-
-async function loadAI() {
-  if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
-      progress_callback: () => {},
-      config: { logLevel: 'error' }
-    });
-  }
-  return generator;
-}
 
 window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
   if (!input) return alert("Please enter an app description!");
 
   const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---filename.ext---\n<file content>`;
-  const gen = await loadAI();
-  const output = await gen(prompt, { max_new_tokens: 500 });
-  parseGeneratedFiles(output[0].generated_text);
+
+  // ✅ Call your Hugging Face API instead of local model
+  const response = await fetch("https://Papgy-App-Builder.hf.space/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+  });
+
+  const data = await response.json();
+  const generated = data.output || "";
+
+  parseGeneratedFiles(generated);
   updatePreview();
 };
 
