@@ -1,4 +1,4 @@
-import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+from transformers import pipeline
 
 let generator;
 window.generatedFiles = {};
