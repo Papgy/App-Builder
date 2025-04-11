@@ -1,14 +1,13 @@
 function downloadProject() {
-  const html = window.generatedHTML || '';
-  const css = window.generatedCSS || '';
-  const js = window.generatedJS || '';
-
   const zip = new JSZip();
 
-  zip.file("index.html", generateHTMLWrapper(html, css, js));
-  zip.file("style.css", css);
-  zip.file("script.js", js);
-  zip.file("README.md", "# AI App Builder Project\nGenerated with the AI App Builder");
+  for (const [type, content] of Object.entries(window.generatedFiles)) {
+    const ext = getExtension(type);
+    const filename = `main.${ext}`;
+    zip.file(filename, content);
+  }
+
+  zip.file("README.md", "# AI App Builder Project\nGenerated using the AI App Builder interface.");
 
   zip.generateAsync({ type: "blob" }).then(function (content) {
     const link = document.createElement("a");
@@ -18,18 +17,14 @@ function downloadProject() {
   });
 }
 
-function generateHTMLWrapper(bodyHTML, css, js) {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generated App</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-${bodyHTML}
-<script src="script.js"></script>
-</body>
-</html>`;
+function getExtension(type) {
+  switch (type.toLowerCase()) {
+    case 'html': return 'html';
+    case 'css': return 'css';
+    case 'js': return 'js';
+    case 'python': return 'py';
+    case 'ts': return 'ts';
+    case 'json': return 'json';
+    default: return type.toLowerCase();
+  }
 }
