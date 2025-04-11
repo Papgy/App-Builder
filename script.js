@@ -17,7 +17,7 @@ window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
   if (!input) return alert("Please enter an app description!");
 
-  const prompt = `Generate code for the following app idea:\n"${input}". Respond in the format:\n---filename.ext---\n<file content>`;
+  const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---filename.ext---\n<file content>`;
   const gen = await loadAI();
   const output = await gen(prompt, { max_new_tokens: 500 });
   parseGeneratedFiles(output[0].generated_text);
