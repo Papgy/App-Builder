@@ -1,12 +1,14 @@
-import { pipeline } from '@huggingface/transformers';
-const classifier = await pipeline('text-generation');
+import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
 
 let generator;
 window.generatedFiles = {};
 
 async function loadAI() {
   if (!generator) {
-    generator = await classifier('Xenova/distilgpt2');
+    generator = await pipeline('text-generation', 'Xenova/opt-125m', {
+      progress_callback: () => {},
+      config: { logLevel: 'error' }
+    });
   }
   return generator;
 }
@@ -15,31 +17,27 @@ window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
   if (!input) return alert("Please enter an app description!");
 
-  const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>\n(optional: add PYTHON, TS, etc.)`;
-
+  const prompt = `Generate code for the following app idea:\n"${input}". Respond in the format:\n---filename.ext---\n<file content>`;
   const gen = await loadAI();
   const output = await gen(prompt, { max_new_tokens: 500 });
-  const text = output[0].generated_text;
-
-  parseGeneratedFiles(text);
+  parseGeneratedFiles(output[0].generated_text);
   updatePreview();
 };
 
 function parseGeneratedFiles(rawText) {
   window.generatedFiles = {};
-  const sections = rawText.split(/---([A-Z]+)---/g).filter(Boolean);
-
-  for (let i = 0; i < sections.length; i += 2) {
-    const type = sections[i].toLowerCase();
-    const content = sections[i + 1]?.trim() || '';
-    window.generatedFiles[type] = content;
+  const parts = rawText.split(/---(.*?)---/g).filter(Boolean);
+  for (let i = 0; i < parts.length; i += 2) {
+    const filename = parts[i].trim();
+    const content = parts[i + 1]?.trim() || '';
+    if (filename) window.generatedFiles[filename] = content;
   }
 }
 
 window.updatePreview = function () {
-  const html = window.generatedFiles['html'] || '';
-  const css = window.generatedFiles['css'] || '';
-  const js = window.generatedFiles['js'] || '';
+  const html = window.generatedFiles['index.html'] || '';
+  const css = window.generatedFiles['style.css'] || '';
+  const js = window.generatedFiles['script.js'] || '';
 
   const full = `
 <!DOCTYPE html>
@@ -65,24 +63,69 @@ window.switchTab = function (tab) {
   document.getElementById('workspaceTab').classList.toggle('hidden', tab !== 'workspace');
   document.getElementById('tabPreview').classList.toggle('text-blue-600', tab === 'preview');
   document.getElementById('tabWorkspace').classList.toggle('text-blue-600', tab === 'workspace');
-
-  if (tab === 'workspace') renderWorkspace();
+  if (tab === 'workspace') renderFileTree();
 };
 
-function renderWorkspace() {
-  const container = document.getElementById("dynamicCodeBlocks");
-  container.innerHTML = '';
+function renderFileTree() {
+  const treeContainer = document.getElementById("fileTree");
+  treeContainer.innerHTML = '';
+  const fileMap = buildFileTree(window.generatedFiles);
+  treeContainer.appendChild(renderTreeNodes(fileMap, ''));
+}
 
-  for (const [lang, content] of Object.entries(window.generatedFiles)) {
-    const langLabel = lang.toUpperCase();
-    const color = lang === 'html' ? 'blue' : lang === 'css' ? 'green' : lang === 'js' ? 'yellow' : 'gray';
-
-    const block = document.createElement("div");
-    block.className = "bg-white p-4 rounded shadow";
-    block.innerHTML = `
-      <h3 class="font-semibold text-${color}-600 mb-2">📄 ${langLabel}</h3>
-      <pre class="bg-gray-100 p-2 text-sm font-mono overflow-auto h-64 rounded whitespace-pre-wrap">${content}</pre>
-    `;
-    container.appendChild(block);
+function buildFileTree(files) {
+  const tree = {};
+  for (const path in files) {
+    const parts = path.split('/');
+    let current = tree;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (!current[part]) {
+        current[part] = i === parts.length - 1 ? files[path] : {};
+      }
+      current = current[part];
+    }
   }
+  return tree;
+}
+
+function renderTreeNodes(tree, path) {
+  const fragment = document.createElement("div");
+
+  for (const key in tree) {
+    const fullPath = path ? `${path}/${key}` : key;
+    const value = tree[key];
+
+    if (typeof value === 'string') {
+      const file = document.createElement("div");
+      file.className = "ml-4 cursor-pointer hover:text-blue-600";
+      file.textContent = key;
+      file.onclick = () => {
+        document.getElementById("activeFilename").textContent = fullPath;
+        document.getElementById("codeViewer").textContent = value;
+      };
+      fragment.appendChild(file);
+    } else {
+      const folder = document.createElement("div");
+      folder.className = "ml-2 mb-1";
+
+      const toggle = document.createElement("div");
+      toggle.textContent = key;
+      toggle.className = "folder-toggle cursor-pointer font-semibold text-gray-700";
+      toggle.onclick = () => {
+        toggle.classList.toggle('open');
+        content.classList.toggle('hidden');
+      };
+
+      const content = document.createElement("div");
+      content.className = "ml-4 hidden";
+      content.appendChild(renderTreeNodes(value, fullPath));
+
+      folder.appendChild(toggle);
+      folder.appendChild(content);
+      fragment.appendChild(folder);
+    }
+  }
+
+  return fragment;
 }
