@@ -4,18 +4,19 @@ let generator;
 
 async function loadAI() {
   if (!generator) {
-    generator = await pipeline('text-generation', 'Xenova/distilgpt2');
+    generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
+      progress_callback: () => {} // Suppress console spam
+    });
   }
   return generator;
 }
 
-// Make it global
 window.generateApp = async function () {
   const input = document.getElementById("userInput").value.trim();
   const prompt = `Generate HTML, CSS, and JS code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>`;
 
-  const generator = await loadAI();
-  const output = await generator(prompt, { max_new_tokens: 400 });
+  const gen = await loadAI();
+  const output = await gen(prompt, { max_new_tokens: 400 });
   const text = output[0].generated_text;
 
   const html = text.split('---HTML---')[1]?.split('---CSS---')[0]?.trim() || '';
@@ -26,7 +27,7 @@ window.generateApp = async function () {
   document.getElementById("cssCode").value = css;
   document.getElementById("jsCode").value = js;
 
-  window.updatePreview(); // Ensure it's also globally available
+  window.updatePreview();
 };
 
 window.updatePreview = function () {
@@ -40,7 +41,13 @@ window.updatePreview = function () {
 <head><style>${css}</style></head>
 <body>
 ${html}
-<script>${js}<\/script>
+<script>
+try {
+${js}
+} catch(e) {
+  document.body.innerHTML += '<pre style="color:red;">JS Error: ' + e + '</pre>';
+}
+<\/script>
 </body>
 </html>`;
 
@@ -57,8 +64,8 @@ window.suggestFix = async function () {
   const prompt = `This is a ${type.toUpperCase()} line: "${line}". Suggest a fix or improvement.`;
 
   document.getElementById("fixOutput").innerText = "💭 Thinking...";
-  const generator = await loadAI();
-  const response = await generator(prompt, { max_new_tokens: 100 });
+  const gen = await loadAI();
+  const response = await gen(prompt, { max_new_tokens: 100 });
 
   document.getElementById("fixOutput").innerText = response[0].generated_text;
 };
