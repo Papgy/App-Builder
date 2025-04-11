@@ -5,8 +5,8 @@ let generator;
 async function loadAI() {
   if (!generator) {
     generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
-      progress_callback: () => {}, // Silence logs
-      config: { logLevel: 'error' } // Suppress ONNX spam (if supported)
+      progress_callback: () => {},
+      config: { logLevel: 'error' }
     });
   }
   return generator;
@@ -17,7 +17,6 @@ window.generateApp = async function () {
   if (!input) return alert("Please enter an app description!");
 
   const prompt = `Generate HTML, CSS, and JS code for the following app idea:\n"${input}". Respond in this format:\n---HTML---\n<your html>\n---CSS---\n<your css>\n---JS---\n<your js>`;
-
   const gen = await loadAI();
   const output = await gen(prompt, { max_new_tokens: 400 });
   const text = output[0].generated_text;
@@ -26,17 +25,21 @@ window.generateApp = async function () {
   const css = text.split('---CSS---')[1]?.split('---JS---')[0]?.trim() || '';
   const js = text.split('---JS---')[1]?.trim() || '';
 
-  document.getElementById("htmlCode").value = html;
-  document.getElementById("cssCode").value = css;
-  document.getElementById("jsCode").value = js;
+  document.getElementById("htmlCode")?.remove(); // Not shown in UI, but cleanup if exists
+  document.getElementById("cssCode")?.remove();
+  document.getElementById("jsCode")?.remove();
+
+  window.generatedHTML = html;
+  window.generatedCSS = css;
+  window.generatedJS = js;
 
   updatePreview();
 };
 
 window.updatePreview = function () {
-  const html = document.getElementById("htmlCode").value;
-  const css = document.getElementById("cssCode").value;
-  const js = document.getElementById("jsCode").value;
+  const html = window.generatedHTML || '';
+  const css = window.generatedCSS || '';
+  const js = window.generatedJS || '';
 
   const full = `
 <!DOCTYPE html>
@@ -57,18 +60,18 @@ ${js}
   document.getElementById("previewFrame").srcdoc = full;
 };
 
-window.suggestFix = async function () {
-  const lineNum = parseInt(document.getElementById("lineNumber").value);
-  const type = document.getElementById("codeType").value;
-  const editor = document.getElementById(`${type}Code`);
-  const code = editor.value.split("\n");
-  const line = code[lineNum - 1] || "Line not found.";
+window.switchTab = function (tab) {
+  document.getElementById('previewTab').classList.toggle('hidden', tab !== 'preview');
+  document.getElementById('workspaceTab').classList.toggle('hidden', tab !== 'workspace');
 
-  const prompt = `This is a ${type.toUpperCase()} line: "${line}". Suggest a fix or improvement.`;
+  document.getElementById('tabPreview').classList.toggle('text-blue-600', tab === 'preview');
+  document.getElementById('tabWorkspace').classList.toggle('text-blue-600', tab === 'workspace');
 
-  document.getElementById("fixOutput").innerText = "💭 Thinking...";
-  const gen = await loadAI();
-  const response = await gen(prompt, { max_new_tokens: 100 });
-
-  document.getElementById("fixOutput").innerText = response[0].generated_text;
+  if (tab === 'workspace') renderWorkspace();
 };
+
+function renderWorkspace() {
+  document.getElementById("codeHTML").textContent = window.generatedHTML || '';
+  document.getElementById("codeCSS").textContent = window.generatedCSS || '';
+  document.getElementById("codeJS").textContent = window.generatedJS || '';
+}
