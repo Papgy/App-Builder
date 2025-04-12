@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI App Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+  <div class="grid grid-cols-2 h-screen">
+    <div class="p-6 border-r border-gray-800">
+      <h1 class="text-2xl font-bold mb-4">AI App Builder</h1>
+      <textarea id="promptInput" class="w-full h-64 p-3 bg-gray-800 rounded mb-4" placeholder="Describe your app idea..."></textarea>
+      <button id="generateBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Generate</button>
+    </div>
+    <div class="p-6 overflow-y-auto">
+      <div class="flex justify-between mb-4">
+        <h2 class="text-xl font-semibold">Workspace</h2>
+        <button id="downloadBtn" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded">Download ZIP</button>
+      </div>
+      <div id="workspace" class="space-y-4"></div>
+    </div>
+  </div>
+
+  <script src="/js/ai.js"></script>
+  <script src="/js/generator.js"></script>
+  <script src="/js/workspace.js"></script>
+  <script src="/js/filedownloader.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+</html>
