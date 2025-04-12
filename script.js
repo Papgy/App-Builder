@@ -6,16 +6,21 @@ window.generateApp = async function () {
 
   const prompt = `Generate code for the following app idea:\n"${input}". Respond in this format:\n---filename.ext---\n<file content>`;
 
-  const response = await fetch("https://app-builderp.onrender.com/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
-  });
+  try {
+    const response = await fetch("https://app-builderp.onrender.com/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
 
-  const data = await response.json();
-  const generated = data.output || "";
-  parseGeneratedFiles(generated);
-  updatePreview();
+    const data = await response.json();
+    const generated = data.output || "";
+    parseGeneratedFiles(generated);
+    updatePreview();
+  } catch (error) {
+    alert("Failed to connect to the API. See console for details.");
+    console.error("Fetch error:", error);
+  }
 };
 
 function parseGeneratedFiles(rawText) {
@@ -87,7 +92,7 @@ function renderTreeNodes(tree, path) {
   const fragment = document.createElement("div");
 
   for (const key in tree) {
-    const fullPath = path ? `${path}/${key}` : key;
+    const fullPath = path ? \`\${path}/\${key}\` : key;
     const value = tree[key];
 
     if (typeof value === 'string') {
