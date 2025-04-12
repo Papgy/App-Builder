@@ -15,7 +15,7 @@ async function generateCode() {
 
   const response = await fetch("https://app-builderp.onrender.com/generate", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin" },
+    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "true" },
     body: JSON.stringify({ prompt }),
   });
 
