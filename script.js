@@ -50,7 +50,7 @@ ${js}
 } catch(e) {
   document.body.innerHTML += '<pre style="color:red;">JS Error: ' + e + '</pre>';
 }
-<\/script>
+</script>
 </body>
 </html>`;
 
@@ -92,7 +92,7 @@ function renderTreeNodes(tree, path) {
   const fragment = document.createElement("div");
 
   for (const key in tree) {
-    const fullPath = path ? \`\${path}/\${key}\` : key;
+    const fullPath = path ? `${path}/${key}` : key;
     const value = tree[key];
 
     if (typeof value === 'string') {
