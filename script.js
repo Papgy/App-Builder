@@ -11,24 +11,34 @@ function switchTab(tabName) {
 
 async function generateCode() {
   const prompt = document.getElementById("promptInput").value;
-  if (!prompt.trim()) return alert("Please enter a prompt.");
+  if (!prompt.trim()) {
+    alert("Please enter a prompt.");
+    return;
+  }
 
-  const response = await fetch("https://app-builderp.onrender.com/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
-  });
+  try {
+    const response = await fetch("https://app-builderp.onrender.com/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
 
-  const data = await response.json();
-  const generated = data.output;
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
 
-  // Show raw code in workspace
-  document.getElementById("codeOutput").textContent = generated;
+    const data = await response.json();
+    const generated = data.output;
 
-  // Optionally inject into preview (if it’s HTML-ish)
-  const frame = document.getElementById("previewFrame");
-  frame.srcdoc = generated;
+    // Show raw code in workspace
+    document.getElementById("codeOutput").textContent = generated;
 
-  // Default to workspace tab
-  switchTab('workspace');
+    // Inject HTML into preview (use with caution)
+    document.getElementById("previewFrame").srcdoc = generated;
+
+    switchTab('workspace');
+  } catch (error) {
+    console.error("Failed to fetch:", error);
+    alert("Something went wrong while contacting the API. Please try again.");
+  }
 }
