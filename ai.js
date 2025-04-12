@@ -1,4 +1,4 @@
-const OPENROUTER_API_KEY = "YOUR_API_KEY_HERE"; // Replace with your key
+const OPENROUTER_API_KEY = "openai/chatgpt-4o-latest"; // Replace with your key
 
 async function askAI(prompt) {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
