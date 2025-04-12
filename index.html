@@ -2,35 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI App Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white h-screen flex flex-col">
-  <header class="p-4 bg-gray-800 text-xl font-bold">AI App Builder</header>
+<body class="bg-gray-950 text-white font-sans">
+  <div class="grid grid-cols-2 h-screen">
+    <!-- Input Panel -->
+    <div class="p-6 border-r border-gray-800">
+      <h1 class="text-2xl font-bold mb-4">AI App Builder</h1>
+      <textarea id="promptInput" class="w-full h-64 p-3 bg-gray-800 rounded mb-4" placeholder="Describe your app idea..."></textarea>
+      <button id="generateBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Generate</button>
+    </div>
 
-  <main class="flex flex-1">
-    <!-- Left Input Panel -->
-    <section class="w-1/3 bg-gray-800 p-4 flex flex-col gap-4">
-      <textarea id="promptInput" class="w-full h-48 p-2 bg-gray-700 rounded" placeholder="Enter your app idea..."></textarea>
-      <button onclick="generateCode()" class="bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded">Generate</button>
-    </section>
+    <!-- Output Panel -->
+    <div class="p-6 overflow-y-auto">
+      <div class="flex justify-between mb-4">
+        <h2 class="text-xl font-semibold">Workspace</h2>
+        <button id="downloadBtn" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded">Download ZIP</button>
+      </div>
+      <div id="workspace" class="space-y-4"></div>
+    </div>
+  </div>
 
-    <!-- Right Panel with Tabs -->
-    <section class="w-2/3 flex flex-col">
-      <div class="flex bg-gray-700">
-        <button class="tab-btn px-4 py-2" onclick="switchTab('preview')">Preview</button>
-        <button class="tab-btn px-4 py-2" onclick="switchTab('workspace')">Workspace</button>
-      </div>
-      <div id="previewTab" class="flex-1 p-4 overflow-auto hidden">
-        <iframe id="previewFrame" class="w-full h-full border rounded bg-white"></iframe>
-      </div>
-      <div id="workspaceTab" class="flex-1 p-4 overflow-auto hidden">
-        <pre id="codeOutput" class="bg-black text-green-400 p-4 rounded"></pre>
-      </div>
-    </section>
-  </main>
-
+  <script src="ai.js"></script>
+  <script src="generator.js"></script>
+  <script src="workspace.js"></script>
+  <script src="filedownloader.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
