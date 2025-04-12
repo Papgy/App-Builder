@@ -4,76 +4,46 @@
   <meta charset="UTF-8" />
   <title>AI App Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <style>
-    .folder-toggle::before {
-      content: "▶";
-      display: inline-block;
-      margin-right: 0.25rem;
-      transition: transform 0.2s;
-    }
-    .folder-toggle.open::before {
-      transform: rotate(90deg);
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans">
+<body class="bg-gray-100 text-gray-800 font-sans p-4">
 
-<div class="grid grid-cols-1 lg:grid-cols-3 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">🧠 AI App Builder</h1>
 
-  <!-- Left Panel -->
-  <div class="bg-white p-6 border-r shadow-lg lg:col-span-1 flex flex-col">
-    <h1 class="text-2xl font-bold mb-4">🧠 AI App Builder</h1>
-    <label class="font-medium mb-2">Describe your app:</label>
-    <textarea id="userInput" rows="6" placeholder="e.g. A full-stack blog app"
-              class="w-full p-3 border border-gray-300 rounded mb-4 resize-none"></textarea>
-    <button onclick="generateApp()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-      Generate App
-    </button>
-  </div>
-
-  <!-- Right Panel -->
-  <div class="lg:col-span-2 flex flex-col">
+    <!-- User Input -->
+    <div class="mb-6">
+      <label class="block text-lg font-medium mb-2">Describe your app:</label>
+      <textarea id="userInput" rows="3" placeholder="e.g. A weather app with dark mode"
+        class="w-full p-3 border border-gray-300 rounded"></textarea>
+      <button onclick="generateApp()"
+        class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Generate App</button>
+    </div>
 
     <!-- Tabs -->
-    <div class="bg-white border-b px-6 py-3 flex items-center gap-4">
-      <button id="tabPreview" onclick="switchTab('preview')"
-              class="tab-btn text-blue-600 font-semibold">👁 Preview</button>
-      <button id="tabWorkspace" onclick="switchTab('workspace')"
-              class="tab-btn text-gray-600 hover:text-blue-600">🧩 Workspace</button>
+    <div class="flex space-x-4 mb-4">
+      <button id="tabPreview" onclick="switchTab('preview')" class="text-blue-600 font-semibold">Preview</button>
+      <button id="tabWorkspace" onclick="switchTab('workspace')" class="font-semibold">Workspace</button>
     </div>
 
-    <!-- Preview -->
-    <div id="previewTab" class="flex-1 p-6">
-      <iframe id="previewFrame" class="w-full h-full border rounded bg-gray-50 min-h-[600px]"></iframe>
+    <!-- Preview Panel -->
+    <div id="previewTab" class="mb-6">
+      <iframe id="previewFrame" class="w-full h-96 border border-gray-400 bg-white"></iframe>
     </div>
 
-    <!-- Workspace -->
-    <div id="workspaceTab" class="hidden flex-1 p-6 overflow-y-auto">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
-        
-        <!-- Sidebar: File Tree -->
-        <div class="bg-white rounded border shadow-md p-3 col-span-1 overflow-y-auto max-h-[80vh]">
-          <h2 class="font-semibold text-sm mb-2">📁 Files</h2>
-          <div id="fileTree" class="text-sm font-mono"></div>
+    <!-- Workspace Panel -->
+    <div id="workspaceTab" class="mb-6 hidden">
+      <h2 class="text-xl font-semibold mb-2">📁 Project Files</h2>
+      <div class="flex">
+        <div id="fileTree" class="w-1/3 p-2 bg-gray-50 border-r border-gray-300"></div>
+        <div class="w-2/3 p-4">
+          <h3 id="activeFilename" class="font-semibold text-gray-700 mb-2"></h3>
+          <pre id="codeViewer" class="bg-gray-100 p-4 overflow-x-auto whitespace-pre-wrap text-sm border"></pre>
         </div>
-
-        <!-- Code Viewer -->
-        <div class="col-span-3">
-          <div class="bg-white rounded border shadow-md h-[80vh] overflow-y-auto">
-            <div class="p-3 border-b bg-gray-100 font-mono text-sm text-gray-700" id="activeFilename">Select a file to view</div>
-            <pre id="codeViewer" class="p-4 text-sm font-mono whitespace-pre-wrap"></pre>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
-<script src="zip.js"></script>
-<script type="module" src="script.js"></script>
-
+  <script src="script.js"></script>
 </body>
 </html>
